@@ -3,6 +3,8 @@
 const AWS = require("aws-sdk");
 const uuidv4 = require("uuid/v4");
 
+const info = require('./info');
+
 const tableName = process.env.DYNAMODB_MEDIA_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -31,7 +33,7 @@ exports.loadMedia = (event, context, callback) => {
       convertedItems.push({
         data: item,
         tags: itemTags
-      })
+      });
     });
 
     callback(null, {
@@ -69,6 +71,9 @@ exports.createMedia = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -86,14 +91,14 @@ exports.updateMedia = (event, context, callback) => {
       uuid: event.pathParameters.uuid
     },
     ExpressionAttributeNames: {
-      '#media_name': 'name',
-      '#media_desc': 'desc'
+      "#media_name": "name",
+      "#media_desc": "desc"
     },
     ExpressionAttributeValues: {
-      ':name': data.name,
-      ':desc': data.desc,
-      ':image': data.image,
-      ':tags': data.tags
+      ":name": data.name,
+      ":desc": data.desc,
+      ":image": data.image,
+      ":tags": data.tags
     },
     UpdateExpression:
       "SET #media_name = :name, #media_desc = :desc, image = :image, tags = :tags",
@@ -113,6 +118,9 @@ exports.updateMedia = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -141,6 +149,9 @@ exports.deleteMedia = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },

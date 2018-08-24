@@ -3,6 +3,8 @@
 const AWS = require("aws-sdk");
 const uuidv4 = require("uuid/v4");
 
+const info = require('./info');
+
 const tableName = process.env.DYNAMODB_LOCATIONS_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -31,7 +33,7 @@ exports.loadLocations = (event, context, callback) => {
       convertedItems.push({
         data: item,
         tags: itemTags
-      })
+      });
     });
 
     callback(null, {
@@ -72,6 +74,9 @@ exports.createLocation = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -89,17 +94,17 @@ exports.updateLocation = (event, context, callback) => {
       uuid: event.pathParameters.uuid
     },
     ExpressionAttributeNames: {
-      '#location_name': 'name',
-      '#location_desc': 'desc'
+      "#location_name": "name",
+      "#location_desc": "desc"
     },
     ExpressionAttributeValues: {
-      ':lat': data.lat,
-      ':lon': data.lon,
-      ':name': data.name,
-      ':desc': data.desc,
-      ':address': data.address,
-      ':image': data.image,
-      ':tags': data.tags
+      ":lat": data.lat,
+      ":lon": data.lon,
+      ":name": data.name,
+      ":desc": data.desc,
+      ":address": data.address,
+      ":image": data.image,
+      ":tags": data.tags
     },
     UpdateExpression:
       "SET lat=:lat, lon=:lon, #location_name = :name, #location_desc = :desc, address = :address, image = :image, tags = :tags",
@@ -119,6 +124,9 @@ exports.updateLocation = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -147,6 +155,9 @@ exports.deleteLocation = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },

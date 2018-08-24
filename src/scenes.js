@@ -3,6 +3,8 @@
 const AWS = require("aws-sdk");
 const uuidv4 = require("uuid/v4");
 
+const info = require("./info");
+
 const tableName = process.env.DYNAMODB_SCENES_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -27,8 +29,8 @@ exports.loadScenes = (event, context, callback) => {
     const convertedItems = new Array();
     result.Items.forEach(item => {
       const itemTags = item.tags;
-      const relatedLocation = item.related_location
-      const relatedMedia = item.related_media
+      const relatedLocation = item.related_location;
+      const relatedMedia = item.related_media;
 
       delete item.tags;
       delete item.related_location;
@@ -39,7 +41,7 @@ exports.loadScenes = (event, context, callback) => {
         tags: itemTags,
         related_location: relatedLocation,
         related_media: relatedMedia
-      })
+      });
     });
 
     callback(null, {
@@ -78,6 +80,9 @@ exports.createScene = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -95,14 +100,14 @@ exports.updateScene = (event, context, callback) => {
       uuid: event.pathParameters.uuid
     },
     ExpressionAttributeNames: {
-      '#scene_desc': 'desc'
+      "#scene_desc": "desc"
     },
     ExpressionAttributeValues: {
-      ':desc': data.desc,
-      ':image': data.image,
-      ':related_location': data.related_location,
-      ':related_media': data.related_media,
-      ':tags': data.tags
+      ":desc": data.desc,
+      ":image": data.image,
+      ":related_location": data.related_location,
+      ":related_media": data.related_media,
+      ":tags": data.tags
     },
     UpdateExpression:
       "SET #scene_desc = :desc, image = :image, related_location = :related_location, related_media = :related_media, tags = :tags",
@@ -122,6 +127,9 @@ exports.updateScene = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -150,6 +158,9 @@ exports.deleteScene = (event, context, callback) => {
       });
       return;
     }
+
+    info.updateInfo();
+
     callback(null, {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },

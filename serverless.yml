@@ -4,12 +4,22 @@ provider:
   name: aws
   runtime: nodejs8.10
   environment:
+    DYNAMODB_INFO_TABLE: ${self:service}-info
     DYNAMODB_LOCATIONS_TABLE: ${self:service}-locations
     DYNAMODB_MEDIA_TABLE: ${self:service}-media
     DYNAMODB_SCENES_TABLE: ${self:service}-scenes
   stage: dev
   region: ap-northeast-2
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_INFO_TABLE}"
     - Effect: "Allow"
       Action:
         - dynamodb:Query
@@ -48,6 +58,13 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
+  # Define Info READ Functions
+  loadInfo:
+    handler: src/info.loadInfo
+    events:
+      - http:
+          path: info
+          method: get
   # Define Location CRUD Functions
   loadLocations:
     handler: src/locations.loadLocations
@@ -126,6 +143,19 @@ functions:
 
 resources:
   Resources:
+    InfoTable:
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:provider.environment.DYNAMODB_INFO_TABLE}
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: N
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     LocationsTable:
       Type: AWS::DynamoDB::Table
       Properties: 
