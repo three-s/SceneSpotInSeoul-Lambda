@@ -1,0 +1,167 @@
+service: scenespot-in-seoul
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  environment:
+    DYNAMODB_LOCATIONS_TABLE: ${self:service}-locations
+    DYNAMODB_MEDIA_TABLE: ${self:service}-media
+    DYNAMODB_SCENES_TABLE: ${self:service}-scenes
+  stage: dev
+  region: ap-northeast-2
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_LOCATIONS_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_MEDIA_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_SCENES_TABLE}"
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.js
+#    - exclude-me-dir/**
+
+functions:
+  # Define Location CRUD Functions
+  loadLocations:
+    handler: src/locations.loadLocations
+    events:
+      - http:
+          path: locations
+          method: get
+  createLocation:
+    handler: src/locations.createLocation
+    events:
+      - http:
+          path: locations
+          method: post
+  updateLocation:
+    handler: src/locations.updateLocation
+    events:
+      - http:
+          path: locations/{uuid}
+          method: put
+  deleteLocation:
+    handler: src/locations.deleteLocation
+    events:
+      - http:
+          path: locations/{uuid}
+          method: delete
+  # Define Media CRUD Functions
+  loadMedia:
+    handler: src/media.loadMedia
+    events:
+      - http:
+          path: media
+          method: get
+  createMedia:
+    handler: src/media.createMedia
+    events:
+      - http:
+          path: media
+          method: post
+  updateMedia:
+    handler: src/media.updateMedia
+    events:
+      - http:
+          path: media/{uuid}
+          method: put
+  deleteMedia:
+    handler: src/media.deleteMedia
+    events:
+      - http:
+          path: media/{uuid}
+          method: delete
+  # Define Scene CRUD Functions
+  loadScenes:
+    handler: src/scenes.loadScenes
+    events:
+      - http:
+          path: scenes
+          method: get
+  createScene:
+    handler: src/scenes.createScene
+    events:
+      - http:
+          path: scenes
+          method: post
+  updateScene:
+    handler: src/scenes.updateScene
+    events:
+      - http:
+          path: scenes/{uuid}
+          method: put
+  deleteScene:
+    handler: src/scenes.deleteScene
+    events:
+      - http:
+          path: scenes/{uuid}
+          method: delete
+
+resources:
+  Resources:
+    LocationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:provider.environment.DYNAMODB_LOCATIONS_TABLE}
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    MediaTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_MEDIA_TABLE}
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ScenesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_SCENES_TABLE}
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

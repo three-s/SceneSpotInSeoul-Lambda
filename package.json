@@ -1,0 +1,17 @@
+{
+  "name": "scenespotinseoul-server",
+  "version": "1.0.0",
+  "description": "Backend server for SceneSpot In Seoul Application",
+  "scripts": {
+    "deploy": "serverless deploy -v",
+    "cleanup": "serverless remove"
+  },
+  "author": "Namhyun, Gu",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.300.0"
+  }
+}
