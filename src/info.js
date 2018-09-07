@@ -1,13 +1,17 @@
 "use strict";
 
 const AWS = require("aws-sdk");
+const middy = require("middy");
+const {
+  cors
+} = require("middy/middlewares");
 
 const tableName = process.env.DYNAMODB_INFO_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const infoId = 0;
 
-exports.loadInfo = (event, context, callback) => {
+const loadInfo = (event, context, callback) => {
   const params = {
     TableName: tableName,
     Key: {
@@ -20,7 +24,9 @@ exports.loadInfo = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           message: "Couldn't fetch the info."
         })
@@ -29,13 +35,15 @@ exports.loadInfo = (event, context, callback) => {
     }
     callback(null, {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(result.Item)
     });
   });
 };
 
-exports.updateInfo = () => {
+const updateInfo = () => {
   const params = {
     TableName: tableName,
     Key: {
@@ -49,9 +57,9 @@ exports.updateInfo = () => {
       return;
     }
     if (result.Item == null) {
-      _createInfo()
+      _createInfo();
     } else {
-      _updateInfo()
+      _updateInfo();
     }
   });
 };
@@ -98,4 +106,12 @@ function _createInfo() {
     }
     console.log(`Created info at ${timestamp}`);
   });
+}
+
+const loadHandler = middy(loadInfo)
+  .use(cors())
+
+module.exports = {
+  loadHandler,
+  updateInfo
 }

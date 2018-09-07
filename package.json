@@ -9,6 +9,7 @@
   "author": "Namhyun, Gu",
   "license": "ISC",
   "dependencies": {
+    "middy": "^0.17.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

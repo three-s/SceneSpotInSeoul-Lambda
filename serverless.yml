@@ -54,86 +54,99 @@ provider:
 functions:
   # Define Info READ Functions
   loadInfo:
-    handler: src/info.loadInfo
+    handler: src/info.loadHandler
     events:
       - http:
           path: info
           method: get
+          cors: true
   # Define Location CRUD Functions
   loadLocations:
-    handler: src/locations.loadLocations
+    handler: src/locations.loadHandler
     events:
       - http:
           path: locations
           method: get
+          cors: true
   createLocation:
-    handler: src/locations.createLocation
+    handler: src/locations.createHandler
     events:
       - http:
           path: locations
           method: post
+          cors: true
   updateLocation:
-    handler: src/locations.updateLocation
+    handler: src/locations.updateHandler
     events:
       - http:
           path: locations/{uuid}
           method: put
+          cors: true
   deleteLocation:
-    handler: src/locations.deleteLocation
+    handler: src/locations.deleteHandler
     events:
       - http:
           path: locations/{uuid}
           method: delete
+          cors: true
   # Define Media CRUD Functions
   loadMedia:
-    handler: src/media.loadMedia
+    handler: src/media.loadHandler
     events:
       - http:
           path: media
           method: get
+          cors: true
   createMedia:
-    handler: src/media.createMedia
+    handler: src/media.createHandler
     events:
       - http:
           path: media
           method: post
+          cors: true
   updateMedia:
-    handler: src/media.updateMedia
+    handler: src/media.updateHandler
     events:
       - http:
           path: media/{uuid}
           method: put
+          cors: true
   deleteMedia:
-    handler: src/media.deleteMedia
+    handler: src/media.deleteHandler
     events:
       - http:
           path: media/{uuid}
           method: delete
+          cors: true
   # Define Scene CRUD Functions
   loadScenes:
-    handler: src/scenes.loadScenes
+    handler: src/scenes.loadHandler
     events:
       - http:
           path: scenes
           method: get
+          cors: true
   createScene:
-    handler: src/scenes.createScene
+    handler: src/scenes.createHandler
     events:
       - http:
           path: scenes
           method: post
+          cors: true
   updateScene:
-    handler: src/scenes.updateScene
+    handler: src/scenes.updateHandler
     events:
       - http:
           path: scenes/{uuid}
           method: put
+          cors: true
   deleteScene:
-    handler: src/scenes.deleteScene
+    handler: src/scenes.deleteHandler
     events:
       - http:
           path: scenes/{uuid}
           method: delete
+          cors: true
 
 resources:
   Resources:

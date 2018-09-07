@@ -1,6 +1,10 @@
 "use strict";
 
 const AWS = require("aws-sdk");
+const middy = require("middy");
+const {
+  cors
+} = require("middy/middlewares");
 const uuidv4 = require("uuid/v4");
 
 const info = require('./info');
@@ -8,7 +12,7 @@ const info = require('./info');
 const tableName = process.env.DYNAMODB_LOCATIONS_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-exports.loadLocations = (event, context, callback) => {
+const loadLocations = (event, context, callback) => {
   const params = {
     TableName: tableName
   };
@@ -18,7 +22,9 @@ exports.loadLocations = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           message: "Couldn't fetch the locations."
         })
@@ -38,13 +44,15 @@ exports.loadLocations = (event, context, callback) => {
 
     callback(null, {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(convertedItems)
     });
   });
 };
 
-exports.createLocation = (event, context, callback) => {
+const createLocation = (event, context, callback) => {
   const data = JSON.parse(event.body);
 
   const params = {
@@ -66,7 +74,9 @@ exports.createLocation = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           message: "Couldn't create the location item.",
           data: params.Item
@@ -79,13 +89,15 @@ exports.createLocation = (event, context, callback) => {
 
     callback(null, {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(params.Item)
     });
   });
 };
 
-exports.updateLocation = (event, context, callback) => {
+const updateLocation = (event, context, callback) => {
   const data = JSON.parse(event.body);
 
   const params = {
@@ -106,8 +118,7 @@ exports.updateLocation = (event, context, callback) => {
       ":image": data.image,
       ":tags": data.tags
     },
-    UpdateExpression:
-      "SET lat=:lat, lon=:lon, #location_name = :name, #location_desc = :desc, address = :address, image = :image, tags = :tags",
+    UpdateExpression: "SET lat=:lat, lon=:lon, #location_name = :name, #location_desc = :desc, address = :address, image = :image, tags = :tags",
     ReturnValues: "ALL_NEW"
   };
 
@@ -116,7 +127,9 @@ exports.updateLocation = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           message: "Couldn't update the location item.",
           data: data
@@ -129,13 +142,15 @@ exports.updateLocation = (event, context, callback) => {
 
     callback(null, {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(result.Attributes)
     });
   });
 };
 
-exports.deleteLocation = (event, context, callback) => {
+const deleteLocation = (event, context, callback) => {
   const params = {
     TableName: tableName,
     Key: {
@@ -148,7 +163,9 @@ exports.deleteLocation = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           message: "Couldn't remove the location item."
         })
@@ -160,10 +177,31 @@ exports.deleteLocation = (event, context, callback) => {
 
     callback(null, {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         message: `Removed ${event.pathParameters.uuid}`
       })
     });
   });
 };
+
+const loadHandler = middy(loadLocations)
+  .use(cors())
+
+const createHandler = middy(createLocation)
+  .use(cors())
+
+const updateHandler = middy(updateLocation)
+  .use(cors())
+
+const deleteHandler = middy(deleteLocation)
+  .use(cors())
+
+module.exports = {
+  loadHandler,
+  createHandler,
+  updateHandler,
+  deleteHandler
+}
