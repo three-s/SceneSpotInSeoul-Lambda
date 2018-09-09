@@ -94,11 +94,18 @@ const createScene = (event, context, callback) => {
     info.updateInfo();
 
     const item = params.Item;
-    const itemTags = item.tags;      
+    const itemTags = item.tags;
     delete item.tags;
+    const itemRelatedLocation = item.related_location;
+    delete item.related_location;  
+    const itemRelatedMedia = item.related_media;
+    delete item.related_media;
+
     const convertedItem = {
       data: item,
-      tags: itemTags
+      tags: itemTags,
+      related_location: itemRelatedLocation,
+      related_media: itemRelatedMedia
     };
 
     callback(null, {
@@ -150,13 +157,20 @@ const updateScene = (event, context, callback) => {
     }
 
     info.updateInfo();
-
+    
     const item = result.Attributes;
-    const itemTags = item.tags;      
+    const itemTags = item.tags;
     delete item.tags;
+    const itemRelatedLocation = item.related_location;
+    delete item.related_location;  
+    const itemRelatedMedia = item.related_media;
+    delete item.related_media;
+
     const convertedItem = {
       data: item,
-      tags: itemTags
+      tags: itemTags,
+      related_location: itemRelatedLocation,
+      related_media: itemRelatedMedia
     };
 
     callback(null, {
