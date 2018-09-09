@@ -87,12 +87,20 @@ const createLocation = (event, context, callback) => {
 
     info.updateInfo();
 
+    const item = params.Item;
+    const itemTags = item.tags;      
+    delete item.tags;
+    const convertedItem = {
+      data: item,
+      tags: itemTags
+    };
+
     callback(null, {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(params.Item)
+      body: JSON.stringify(convertedItem)
     });
   });
 };
@@ -140,12 +148,20 @@ const updateLocation = (event, context, callback) => {
 
     info.updateInfo();
 
+    const item = result.Attributes;
+    const itemTags = item.tags;      
+    delete item.tags;
+    const convertedItem = {
+      data: item,
+      tags: itemTags
+    };
+
     callback(null, {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(result.Attributes)
+      body: JSON.stringify(convertedItem)
     });
   });
 };
