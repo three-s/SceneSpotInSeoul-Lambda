@@ -9,17 +9,12 @@ const {
 const tableName = process.env.DYNAMODB_INFO_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-const infoId = 0;
-
 const loadInfo = (event, context, callback) => {
   const params = {
-    TableName: tableName,
-    Key: {
-      id: infoId
-    }
+    TableName: tableName
   };
 
-  dynamoDb.get(params, (error, result) => {
+  dynamoDb.scan(params, (error, result) => {
     if (error) {
       console.error(error);
       callback(null, {
@@ -38,16 +33,16 @@ const loadInfo = (event, context, callback) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(result.Item)
+      body: JSON.stringify(result.Items)
     });
   });
 };
 
-const updateInfo = () => {
+const updateInfo = (dataName) => {
   const params = {
     TableName: tableName,
     Key: {
-      id: infoId
+      name: dataName
     }
   };
 
@@ -57,20 +52,20 @@ const updateInfo = () => {
       return;
     }
     if (result.Item == null) {
-      _createInfo();
+      _createInfo(dataName);
     } else {
-      _updateInfo();
+      _updateInfo(dataName);
     }
   });
 };
 
-function _updateInfo() {
+function _updateInfo(dataName) {
   const timestamp = new Date().getTime();
 
   const params = {
     TableName: tableName,
     Key: {
-      id: infoId
+      name: dataName
     },
     ExpressionAttributeValues: {
       ":updateDate": timestamp
@@ -88,13 +83,13 @@ function _updateInfo() {
   });
 }
 
-function _createInfo() {
+function _createInfo(dataName) {
   const timestamp = new Date().getTime();
 
   const params = {
     TableName: tableName,
     Item: {
-      id: infoId,
+      name: dataName,
       updateDate: timestamp
     }
   };

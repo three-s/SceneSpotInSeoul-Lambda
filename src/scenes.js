@@ -91,7 +91,7 @@ const createScene = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("scenes");
 
     const item = params.Item;
     const itemTags = item.tags;
@@ -156,7 +156,7 @@ const updateScene = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("scenes");
     
     const item = result.Attributes;
     const itemTags = item.tags;
@@ -206,7 +206,7 @@ const deleteScene = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("scenes");
 
     callback(null, {
       statusCode: 200,

@@ -85,7 +85,7 @@ const createLocation = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("locations");
 
     const item = params.Item;
     const itemTags = item.tags;      
@@ -146,7 +146,7 @@ const updateLocation = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("locations");
 
     const item = result.Attributes;
     const itemTags = item.tags;      
@@ -189,7 +189,7 @@ const deleteLocation = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("locations");
 
     callback(null, {
       statusCode: 200,

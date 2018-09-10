@@ -82,7 +82,7 @@ const createMedia = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("media");
 
     const item = params.Item;
     const itemTags = item.tags;      
@@ -140,7 +140,7 @@ const updateMedia = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("media");
 
     const item = result.Attributes;
     const itemTags = item.tags;      
@@ -183,7 +183,7 @@ const deleteMedia = (event, context, callback) => {
       return;
     }
 
-    info.updateInfo();
+    info.updateInfo("media");
 
     callback(null, {
       statusCode: 200,

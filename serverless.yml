@@ -13,6 +13,7 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
@@ -155,11 +156,11 @@ resources:
       Properties: 
         TableName: ${self:provider.environment.DYNAMODB_INFO_TABLE}
         KeySchema:
-          - AttributeName: id
+          - AttributeName: name
             KeyType: HASH
         AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: N
+          - AttributeName: name
+            AttributeType: S
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
